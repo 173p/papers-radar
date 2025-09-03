@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import Navbar from './components/NavBar'
+import Feed from './components/Feed'
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
     <div>
       <Navbar/>
+      <Feed/>
     </div>
 
 
