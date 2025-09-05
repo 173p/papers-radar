@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
+import { Link } from "react-router";
 
 export default function Feed() {
     const [papers, setPapers] = useState([]);
@@ -31,7 +32,7 @@ export default function Feed() {
 
     // Add loading animation later m8
     if (loading) {
-        return <div className="p-8 max-w-4xl mx-auto text-center">Loading...</div>;
+        return <div className="p-8 max-w-4xl mx-auto text-center">Loading...</div>
     }
 
     const currentPage = paginationInfo ? (startIndex / paginationInfo.maxResultsPerPage) + 1 : 1;
@@ -43,15 +44,20 @@ export default function Feed() {
         Last Week's Top AI Papers
       </h1>
       <div className="space-y-6">
-        {papers.map((paper) => (
+        {papers.map((paper) =>
+        {
+          const paperID = (paper.link).split("/").pop() // Grabs last element after splitting arr
+          return (
           <div key={paper.link} className="p-4 border rounded-lg shadow-md">
+            <Link to={`/paper/${paperID}`}>
             <h2 className="text-xl font-bold mb-2 text-blue-800 hover:text-blue-600">{paper.title}</h2>
+            </Link>
             <p className="text-sm text-gray-600 mb-2">
               <strong>Authors:</strong> {paper.authors.join(", ")}
             </p>
             <p className="text-sm text-gray-600 mb-2"><strong>Published</strong>: {paper.published}</p>
           </div>
-        ))}
+        )})}
       </div>
       <Pagination
       currentPage={currentPage}

@@ -1,16 +1,19 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router'
 import Navbar from './components/NavBar'
 import Feed from './components/Feed'
+import PaperDetails from './components/PaperDetails'
 function App() {
 
 
   return (
     <>
-    <div>
-      <Navbar/>
-      <Feed/>
-    </div>
-
+    <Navbar/>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Feed/>}></Route>
+        <Route path="/paper/:id" element={<PaperDetails/>}></Route>
+      </Routes>
+    </BrowserRouter>
 
     </>
   )

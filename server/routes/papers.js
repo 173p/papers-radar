@@ -18,17 +18,17 @@ function parseXML(xmlString) {
     
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-    const totalResults = parseInt(xmlDoc.getElementsByTagName("opensearch:totalResults")[0].textContent, 10);
+    const totalResults = parseInt(xmlDoc.getElementsByTagName("opensearch:totalResults")[0]?.textContent || '0', 10);
     const entries = xmlDoc.getElementsByTagName("entry");
     const papers = [];
     
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i];
-        const title = entry.getElementsByTagName("title")[0].textContent;
-        const summary = entry.getElementsByTagName("summary")[0].textContent;
-        const authors = Array.from(entry.getElementsByTagName("author")).map(author => author.getElementsByTagName("name")[0].textContent);
-        const link = entry.getElementsByTagName("id")[0].textContent;
-        const published = entry.getElementsByTagName("published")[0].textContent.slice(0, 10);
+        const title = entry.getElementsByTagName("title")[0]?.textContent || "Title n/a";
+        const summary = entry.getElementsByTagName("summary")[0]?.textContent || "Summary n/a";
+        const link = entry.getElementsByTagName("id")[0]?.textContent;
+        const published = entry.getElementsByTagName("published")[0]?.textContent?.slice(0, 10) || "Date n/a";
+        const authors = Array.from(entry.getElementsByTagName("author")).map(author => author.getElementsByTagName("name")[0]?.textContent || "Author n/a");
 
         papers.push({ title, authors, summary, link, published });
     }
@@ -65,10 +65,25 @@ router.get('/', async (req, res) => {
             totalResults
         }
     });
-  } catch (error) {
-    console.error("Error fetching papers from arXiv:", error);
+  } catch (err) {
+    console.error("Error fetching paper(s) from arXiv:", err);
     res.status(500).json({ message: "Failed to fetch data" });
   }
 });
+
+router.get('/:id', async (req, res) => {
+  try {
+  const paperID = req.params.id;
+  const queryURL = `http://export.arxiv.org/api/query?id_list=${paperID}`
+  const response = await axios.get(queryURL)
+  const {papers: paper} = parseXML(response.data);
+  if(paper[0].title == "Title n/a") res.status(404).json({message: "Paper not found"})
+    else res.json(paper[0]);
+  } catch (err) {
+    console.error("Error fetching paper from arXiv:", err)
+    res.status(500).json({message: "Failed to fetch data"})
+  }
+
+})
 
 export default router;
