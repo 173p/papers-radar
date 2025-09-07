@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-
-const user = {name: "D. B. Cooper", imageURL: "https://i.pravatar.cc/300"};
-
+import Login from './Login';
+// const user = {name: "D. B. Cooper", imageURL: "https://i.pravatar.cc/300"};
+const user = null
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   return (
     <header className="m-auto py-4 px-6 md:px-8 border-b border-gray-200 mb-8">
@@ -36,12 +37,16 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <a 
-                href="/" 
-                className="bg-black text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-800 transition"
+              <button 
+                className="bg-black text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition"
+                onClick={() => setShowLogin(true)}
               >
                 Sign in
-              </a>
+              </button>
+              <Login
+              isOpen={showLogin}
+              onClose={() => setShowLogin(false)}
+              />
             </>
           )}
         </div>
